@@ -1,8 +1,13 @@
+import java.util.Dictionary;
+import java.math.*;
+import java.util.Hashtable;
 import java.util.Scanner;
 
 
 public class Main {
-    public static String toBin(int tmp) {
+    static Dictionary<String, Integer> list_of_types = new Hashtable<String, Integer>();
+
+    public static String ToBynary(int tmp) {
         String res = "";
         int num, k = 0;
         num = tmp;
@@ -15,7 +20,7 @@ public class Main {
         while(num > 0) {
             k -= 1;
             if (num >= 1 << k) {
-                res = res + "1";
+                res += "1";
                 num -= 1 << k;
             }else {
                 res = res + "0";
@@ -31,66 +36,59 @@ public class Main {
         }
         return result;
     }
-    public static String toBaseOst(float frac) {
-        String b = "";
-        int n = 16;
-        while (n > 0) {
-            frac = 2 * frac;
-            b = b + (int)Math.floor(frac);
-            frac = frac - (int)Math.floor(frac);
-            n--;
+    public static String SuperDuperFunc(BigInteger n) {
+        int bits = n.bitLength();
+        int shift = 1 << bits;
+        int mask = shift - 1;
+        int number = ((Math.abs(n.intValue()) ^ mask) + 1) & mask;
+        return ToBynary(shift | number);
+    }
+    public static String RetCoolFormat(String res, String str_, String type_) {
+        int coef = res.length();
+        while (coef % 8 != 0){
+            coef++;
         }
-        return b.toString();
+        res = RepeatStr((coef - res.length()), str_) + res;
+        String finalRES = "";
+        coef = 0;
+        for (int i=0; i < res.length(); i++) {
+            if (i % 8 == 0){
+                coef ++;
+            }
+        }
+        if (list_of_types.get(type_) > coef){
+            String rep = RepeatStr((list_of_types.get(type_) - coef), RepeatStr(8, str_));
+            res = rep + res;
+            for (int i=0; i < res.length(); i++) {
+                if (i % 8 == 0){
+                    finalRES += res.substring(i, i+8)+" ";
+                }
+            }
+        }else{
+            for (int i=0; i < res.length(); i++) {
+                if (i % 8 == 0){
+                    finalRES += res.substring(i, i+8)+" ";
+                }
+            }
+        }
+        return finalRES;
     }
     public static void main(String[] args) {
+        list_of_types.put("byte", 1);
+        list_of_types.put("short", 2);
+        list_of_types.put("int", 4);
+        list_of_types.put("long", 8);
         Scanner get_str = new Scanner(System.in);
         String first_int = get_str.nextLine();
+        String type_ = get_str.nextLine();
         get_str.close();
-        if((first_int.contains(".") || first_int.contains(",") && first_int.contains("-"))){
-            first_int = first_int.substring(1);
-            first_int = first_int.replace(',', '.');
-            String[] insert_num = (first_int.split("\\."));
-            String final_bin = toBin(Integer.parseInt((insert_num[0])));
-            String final_ost = toBaseOst(Float.parseFloat(String.format("0.%s", insert_num[1])));
-            int coef_bin = final_bin.length();
-
-            while (coef_bin % 8 != 0){
-                coef_bin++;
-            }
-            String rep_bin = RepeatStr(coef_bin - final_bin.length(), "0");
-            final_bin = rep_bin + final_bin;
-            String final_bin2 = final_bin.replace("0", "c").replace("1", "0").replace("c", "1");
-            final_bin2 = final_bin.substring(0, final_bin.length()-1) + '1';
-            int coef_ost = final_bin.length();
-
-            while (coef_ost % 8 != 0){
-                coef_ost++;
-            }
-            String rep_ost = RepeatStr(coef_ost - final_ost.length(), "0");
-            final_ost = rep_ost + final_ost;
-            String final_ost2 = final_ost.replace("0", "c").replace("1", "0").replace("c", "1");
-            final_ost2 = final_ost.substring(0, final_ost.length()-1) + '1';
-
-            System.out.println(final_bin2 + '.' + final_ost2);
+        if(first_int.contains(".") || first_int.contains(",")){
+            System.out.println("in development");
         }else if (first_int.contains("-")) {
-            first_int = first_int.substring(1);
-            String res = toBin(Integer.parseInt(first_int));
-            int coef = res.length();
-            while (coef % 8 != 0){
-                coef++;
-            }
-            String rep = RepeatStr(coef - res.length(), "0");
-            res = rep + res;
-            String final_bin = res.replace("0", "c").replace("1", "0").replace("c", "1");
-            final_bin = final_bin.substring(0, res.length()-1) + '1';
-            System.out.println(final_bin);
-        }else if((first_int.contains(".") || first_int.contains(","))){
-            first_int = first_int.replace(',', '.');
-            String[] insert_num = (first_int.split("\\."));
-            String final_bin = toBin(Integer.parseInt((insert_num[0])));
-            String final_ost = toBaseOst(Float.parseFloat(String.format("0.%s", insert_num[1])));
-            System.out.println(final_bin + '.' + final_ost);
-
-        }else System.out.println(toBin(Integer.parseInt(first_int)));
+            System.out.println(RetCoolFormat(SuperDuperFunc(new BigInteger(first_int)), "1", type_));
+        }else{
+            String res = ToBynary(Integer.parseInt(first_int));
+            System.out.println((RetCoolFormat(res,"0", type_)));
         }
     }
+}
