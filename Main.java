@@ -83,7 +83,7 @@ public class Main {
             k *= 10;
         }
         a += String.valueOf(FractionToBin(b));
-        res += "1 " + a.substring(2, mlen) + " ";
+        res += a.substring(1, mlen) + " ";
 
         return res;
     }
