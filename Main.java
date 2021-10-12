@@ -1,8 +1,7 @@
-import java.util.Dictionary;
+import java.util.*;
 import java.math.*;
-import java.util.Hashtable;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Main {
@@ -135,15 +134,27 @@ public class Main {
         String first_int = input("! Input ur number: \n! ");
         String type_ = input("! Choose type (byte/short/int/long/float/double): \n! ");
         get_str.close();
+        Pattern pat=Pattern.compile("[-]?[0-9]+(.[0-9]+)?");
+        Matcher matcher=pat.matcher(first_int);
+        while (matcher.find()) {
+            first_int = matcher.group();
+        };
+        boolean b = false;
+        Enumeration<String> enu = list_of_types.keys();
+        while (enu.hasMoreElements()) {
+            if (type_.equals(enu.nextElement())) b = true;
 
-        if(first_int.contains("-")){
-            System.out.println(RetCoolFormat(SuperDuperFunc(new BigInteger(first_int)), "1", type_));
-        }else if (first_int.contains(".") || first_int.contains(",") || Objects.equals(type_, "float") || Objects.equals(type_, "double")) {
-            first_int = first_int.replace(',', '.');
-            System.out.println(FloatOrDouble(String.valueOf(Float.parseFloat(first_int)), type_));
-        }else{
-            System.out.println((RetCoolFormat(ToBinary(Integer.parseInt(first_int)),"0", type_)));
         }
+        if (b){
+            if(first_int.contains("-")){
+                System.out.println(RetCoolFormat(SuperDuperFunc(new BigInteger(first_int)), "1", type_));
+            }else if (first_int.contains(".") || first_int.contains(",") || Objects.equals(type_, "float") || Objects.equals(type_, "double")) {
+                first_int = first_int.replace(',', '.');
+                System.out.println(FloatOrDouble(String.valueOf(Float.parseFloat(first_int)), type_));
+            }else{
+                System.out.println((RetCoolFormat(ToBinary(Integer.parseInt(first_int)),"0", type_)));
+            }
+        }else System.out.println("! Type is not defined(");
     }
     static String input(String str_){
         System.out.print(str_);
