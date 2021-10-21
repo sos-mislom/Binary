@@ -19,15 +19,20 @@ public class Main {
         boolean b = false;
         Enumeration<String> enu = list_of_types.keys(); // Получаю все ключи из списка с типами
         while (enu.hasMoreElements()) if (type_.equals(enu.nextElement())) b = true; // Проверяю корректность типа
-        if (first_int.length() > 10 && !Objects.equals(type_, "float") || !Objects.equals(type_, "double")) b = false;
         if (b){
-            if(first_int.contains("-")){
-                System.out.println(RetCoolFormat(SuperDuperFunc(new BigInteger(first_int)), "1", type_));
-            }else if (first_int.contains(".") || first_int.contains(",") || Objects.equals(type_, "float") || Objects.equals(type_, "double")) {
-                first_int = first_int.replace(',', '.');
-                System.out.println(FloatOrDouble(String.valueOf(Float.parseFloat(first_int)), type_));
-            }else{
-                System.out.println((RetCoolFormat(ToBinary(Integer.parseInt(first_int)),"0", type_)));
+            if (!first_int.contains("-")) {
+                if (!first_int.contains(".") && !first_int.contains(",") && !Objects.equals(type_, "float") && !Objects.equals(type_, "double")) {
+                    System.out.println((RetCoolFormat(ToBinary(Integer.parseInt(first_int)),"0", type_)));
+                } else {
+                    first_int = first_int.replace(',', '.');
+                    System.out.println(FloatOrDouble(String.valueOf(Double.parseDouble(first_int)), type_));
+                }
+            } else {
+                if (first_int.contains(".") || first_int.contains(",") || Objects.equals(type_, "float") || Objects.equals(type_, "double")) {
+                    first_int = first_int.replace(',', '.');
+                    System.out.println(type_);
+                    System.out.println(FloatOrDouble(String.valueOf(Double.parseDouble(first_int)), type_));
+                }else System.out.println(RetCoolFormat(SuperDuperFunc(new BigInteger(first_int)), "1", type_));
             }
         }else System.out.println("! Error, something went wrong");
     }
@@ -64,7 +69,7 @@ public class Main {
 
     }
     // Конвертирует то, что после запятой в бин как вы и учили
-    public static String FractionToBin(float frac) {
+    public static String FractionToBin(double frac) {
         String b = "";
         int n = 53;
         while (n > 0) {
@@ -85,7 +90,8 @@ public class Main {
     }
     // Проводит все манимпуляции если тип - флоат || дабл.
     public static String FloatOrDouble(String number, String type_) {
-        int pp=0, mlen=0, b, k;
+        int pp=0, mlen=0, k;
+        double b;
         String res="";
         if (Objects.equals(type_, "float")){ // Использую сдвиг и лен мантиссы для подгона под тип
             pp = 127;
@@ -95,15 +101,16 @@ public class Main {
             mlen = 53;}
         String[] insert_num = (number.split("\\."));
         String a = ToBinary(Integer.parseInt((insert_num[0])));
-        if (Integer.parseInt((insert_num[0])) < 0){ // Отрицательное - 1, иначе - 0
+        if (Integer.parseInt(insert_num[0]) < 0 || insert_num[0].contains("-")){ // Отрицательное - 1, иначе - 0
             res += "1 ";
         }
         else res += "0 ";
         res += ToBinary(a.length() + pp - 1) + " ";
         b = 0;
         k = 10;
-        for (int i = 0; i < insert_num[1].length(); i++) { // Перевод строки в флоат обычным делением на 10
-            b += Integer.parseInt(String.valueOf(i)) / k;
+        String[] arr = insert_num[1].split("");
+        for (String i: arr) { // Перевод строки в флоат обычным делением на 10
+            b += (double) Integer.parseInt(i) / k;
             k *= 10;
         }
         a += String.valueOf(FractionToBin(b));
